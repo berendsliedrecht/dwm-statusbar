@@ -2,6 +2,8 @@ use bar::Bar;
 use std::time::Duration;
 
 mod bar;
+mod battery;
+mod brightness;
 mod sound;
 mod spotify;
 mod time;

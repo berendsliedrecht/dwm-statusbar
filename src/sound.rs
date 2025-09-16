@@ -14,18 +14,35 @@ impl Sound {
 
         let stdout = std::str::from_utf8(&status).unwrap();
 
-        let front_left = stdout.split('\n').collect::<Vec<&str>>()[5];
-        let words = front_left.split_whitespace().collect::<Vec<&str>>();
-        let volume = words[4].replace(['[', ']'], "");
-        let audible = words[5].replace(['[', ']'], "");
+        let tokens = stdout.split('\n').collect::<Vec<&str>>();
 
-        if audible == "off" {
-            return Ok(Self {
+        let is_mono = tokens.iter().any(|t| t.contains("Mono: Playback"));
+
+        let (volume, audible) = if is_mono {
+            let mono = tokens[4];
+            let tokens: Vec<_> = mono.split_whitespace().collect();
+            let volume = tokens[3];
+            let audible = tokens[5];
+            let volume = volume.replace(['[', ']'], "");
+
+            (volume, audible == "[on]")
+        } else {
+            let front_left = tokens[4];
+            let tokens: Vec<_> = front_left.split_whitespace().collect();
+            let volume = tokens[4];
+            let audible = tokens[5];
+            let volume = volume.replace(['[', ']'], "");
+
+            (volume, audible == "[on]")
+        };
+
+        if audible {
+            Ok(Self { volume })
+        } else {
+            Ok(Self {
                 volume: "MUTED".to_owned(),
-            });
+            })
         }
-
-        Ok(Self { volume })
     }
 }
 
