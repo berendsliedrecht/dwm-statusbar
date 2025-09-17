@@ -27,7 +27,7 @@ impl Sound {
 
             (volume, audible == "[on]")
         } else {
-            let front_left = tokens[4];
+            let front_left = tokens[5];
             let tokens: Vec<_> = front_left.split_whitespace().collect();
             let volume = tokens[4];
             let audible = tokens[5];
